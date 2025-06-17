@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-17T06:49:45.408Z",
+    "tasksAnalyzed": 15,
+    "totalTasks": 15,
+    "analysisCount": 15,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 1,
+      "taskTitle": "Setup Project Repository",
+      "complexityScore": 3,
+      "recommendedSubtasks": 2,
+      "expansionPrompt": "Create the Git repository and set up the directory structure.",
+      "reasoning": "This task involves setting up a basic project structure and version control, which is relatively straightforward."
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Configure Spring Boot Project",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Generate the initial project, configure Maven, and add necessary dependencies.",
+      "reasoning": "Configuring a Spring Boot project with specific dependencies requires some setup but is generally well-documented."
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Database Design and Initialization",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Design the database schema, create SQL scripts, and set up migrations.",
+      "reasoning": "Database design and initialization involve multiple steps and require careful planning to ensure data integrity and performance."
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Implement JWT Authentication",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Configure Spring Security, implement authentication endpoints, and test token generation and validation.",
+      "reasoning": "Implementing JWT authentication involves several steps and security considerations, making it moderately complex."
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "User Management API",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Develop CRUD operations, implement role-based access control, and integrate with the database.",
+      "reasoning": "Creating a user management API with RBAC and integration with the database is a more complex task due to the need for secure and efficient data handling."
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "PC端管理界面搭建",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Set up the Vue 3 project, configure Vite, and implement the login interface.",
+      "reasoning": "Building a PC management interface with modern web technologies involves multiple steps and requires attention to detail for a responsive design."
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "小程序基础框架搭建",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Initialize the UniApp project, configure the WeChat SDK, and implement the login functionality.",
+      "reasoning": "Setting up a mini-program with WeChat integration is moderately complex, involving both frontend and backend configurations."
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "培训内容上传功能",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Integrate Aliyun OSS, implement file upload, and manage file types and sizes.",
+      "reasoning": "Implementing file upload with cloud storage and managing file constraints adds complexity to the task."
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "培训内容展示",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Display training content, integrate video playback, and track learning progress.",
+      "reasoning": "Displaying and playing back training content in a mini-program with progress tracking is moderately complex."
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "AI问答基础功能",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Integrate DeepSeek API, implement chat endpoint, and handle context memory.",
+      "reasoning": "Integrating an AI API and implementing context-aware chat functionality is a more complex task, requiring careful handling of API calls and state management."
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "向量数据库搭建",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Select and set up the vector database, process documents, and optimize retrieval algorithms.",
+      "reasoning": "Setting up a vector database and processing documents for efficient retrieval is a complex task, especially with optimization requirements."
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "问卷设计与发布",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Develop the questionnaire designer, support various question types, and manage questionnaire publication.",
+      "reasoning": "Creating a visual questionnaire designer and managing its publication involves multiple components and user interaction, making it moderately complex."
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "问卷数据收集与分析",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Implement questionnaire filling, collect and analyze data, and generate reports.",
+      "reasoning": "Collecting and analyzing questionnaire data, along with generating reports, is a complex task that requires robust data handling and analysis capabilities."
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "性能优化",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Optimize caching, database queries, and frontend performance.",
+      "reasoning": "Performance optimization across multiple layers (caching, database, frontend) is a complex task that requires a deep understanding of system architecture and performance tuning."
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "安全性和扩展性考虑",
+      "complexityScore": 9,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Implement security measures, consider microservices, and plan for scalability.",
+      "reasoning": "Ensuring security and scalability involves a wide range of tasks, from implementing security features to designing a scalable architecture, making it highly complex."
+    }
+  ]
+}
