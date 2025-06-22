@@ -1,0 +1,221 @@
+# API网关配置
+# 用于Spring Cloud Gateway的路由配置
+
+spring:
+  cloud:
+    gateway:
+      # 全局配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      
+      # 路由配置
+      routes:
+        # 用户服务路由
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**,/api/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@userKeyResolver}"
+            - name: Retry
+              args:
+                retries: 3
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+            - name: CircuitBreaker
+              args:
+                name: user-service
+                fallbackUri: /fallback/user-service
+        
+        # 问卷服务路由
+        - id: survey-service
+          uri: lb://survey-service
+          predicates:
+            - Path=/api/questionnaires/**,/api/surveys/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 200
+                redis-rate-limiter.burstCapacity: 400
+                key-resolver: "#{@userKeyResolver}"
+            - name: Retry
+              args:
+                retries: 3
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+        
+        # AI服务路由
+        - id: ai-service
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**,/api/chat/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@userKeyResolver}"
+            - name: Retry
+              args:
+                retries: 2
+                methods: GET,POST
+                backoff:
+                  firstBackoff: 100ms
+                  maxBackoff: 1000ms
+                  factor: 2
+        
+        # 内容服务路由
+        - id: content-service
+          uri: lb://content-service
+          predicates:
+            - Path=/api/content/**,/api/upload/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 150
+                redis-rate-limiter.burstCapacity: 300
+                key-resolver: "#{@userKeyResolver}"
+            - name: RequestSize
+              args:
+                maxSize: 50MB
+        
+        # 分析服务路由
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/api/analytics/**,/api/reports/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                key-resolver: "#{@userKeyResolver}"
+        
+        # 监控服务路由
+        - id: monitoring-service
+          uri: lb://monitoring-service
+          predicates:
+            - Path=/api/monitoring/**,/actuator/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                key-resolver: "#{@adminKeyResolver}"
+
+      # 默认过滤器
+      default-filters:
+        - name: AddRequestHeader
+          args:
+            name: X-Request-Source
+            value: gateway
+        - name: AddResponseHeader
+          args:
+            name: X-Response-Source
+            value: sihui-gateway
+        - name: RequestTime
+        - name: Hystrix
+          args:
+            name: gateway-hystrix
+            fallbackUri: /fallback/default
+
+# 服务发现配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+  # Redis配置（用于限流）
+  redis:
+    host: redis
+    port: 6379
+    password: ${REDIS_PASSWORD:redis123}
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 10
+        min-idle: 5
+        max-wait: 3000ms
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# 日志配置
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: DEBUG
+
+# 安全配置
+security:
+  oauth2:
+    resourceserver:
+      jwt:
+        jwk-set-uri: http://auth-service:8080/.well-known/jwks.json
+
+# 网关专用配置
+gateway:
+  # 超时配置
+  timeout:
+    connect: 5000
+    response: 30000
+  
+  # 重试配置
+  retry:
+    max-attempts: 3
+    backoff-multiplier: 2
+    initial-interval: 100
+    max-interval: 1000
+  
+  # 熔断配置
+  circuit-breaker:
+    failure-rate-threshold: 50
+    slow-call-rate-threshold: 50
+    slow-call-duration-threshold: 2000
+    permitted-number-of-calls-in-half-open-state: 10
+    minimum-number-of-calls: 10
+    sliding-window-size: 20
+    wait-duration-in-open-state: 30000
+
+# 负载均衡配置
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 5000
+  MaxAutoRetries: 1
+  MaxAutoRetriesNextServer: 2
+  OkToRetryOnAllOperations: false
+  NFLoadBalancerRuleClassName: com.netflix.loadbalancer.WeightedResponseTimeRule 

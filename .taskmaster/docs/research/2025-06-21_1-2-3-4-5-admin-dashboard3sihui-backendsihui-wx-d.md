@@ -1,0 +1,231 @@
+---
+title: Research Session
+query: "分析当前项目的部署架构和配置，包括：
+1. 现有的部署方案和配置文件
+2. 各个服务组件的部署要求
+3. 基础设施和依赖关系
+4. 部署流程和脚本
+5. 提供优化的部署建议和最佳实践
+
+请重点关注：
+- 前端(admin-dashboard_3)、后端(sihui-backend)、微信小程序(sihui-wx)的部署策略
+- Docker容器化部署
+- Nginx反向代理配置
+- 数据库部署和配置
+- SSL证书配置
+- 系统服务配置
+- 性能优化和监控"
+date: 2025/6/22
+time: 01:15:35
+timestamp: 2025-06-21T17:15:35.318Z
+exchanges: 1
+---
+
+# Research Session
+
+## Initial Query
+
+**Question:** 分析当前项目的部署架构和配置，包括：
+1. 现有的部署方案和配置文件
+2. 各个服务组件的部署要求
+3. 基础设施和依赖关系
+4. 部署流程和脚本
+5. 提供优化的部署建议和最佳实践
+
+请重点关注：
+- 前端(admin-dashboard_3)、后端(sihui-backend)、微信小程序(sihui-wx)的部署策略
+- Docker容器化部署
+- Nginx反向代理配置
+- 数据库部署和配置
+- SSL证书配置
+- 系统服务配置
+- 性能优化和监控
+
+**Response:**
+
+## 项目部署架构和配置分析
+
+### 1. 现有的部署方案和配置文件
+
+#### 部署方案
+- **快速部署流程**：`完整部署包/🚀快速部署流程.md` 提供了一个详细的快速部署流程，包括本地配置、打包上传、服务器一键安装和验证访问。
+- **自动化部署脚本**：`scripts/deploy.sh` 是一个自动化部署脚本，支持不同环境（dev, test, prod）的部署，并提供了备份、构建镜像和服务部署等功能。
+
+#### 配置文件
+- **后端配置**：`sihui-backend/.env` 包含了数据库连接信息、JWT密钥、对象存储配置等。
+- **前端配置**：`admin-dashboard_3/.env.production` 包含了API URL、WebSocket URL、应用名称等。
+- **Nginx配置**：`config/nginx/nginx.conf` 和 `deployment-ready/nginx/sihui.conf` 定义了Nginx的基本设置和反向代理配置。
+- **数据库配置**：`config/database.yml` 包含了开发、测试和生产环境的数据库配置。
+- **Dockerfile**：`sihui-backend/Dockerfile` 定义了后端服务的Docker镜像构建过程。
+
+### 2. 各个服务组件的部署要求
+
+#### 前端 (admin-dashboard_3)
+- **技术栈**：Vue 3 + Element Plus + TypeScript
+- **构建工具**：Vite
+- **部署要求**：
+  - Node.js 18.x LTS
+  - Nginx作为反向代理
+  - SSL证书配置
+  - 静态文件目录配置
+
+#### 后端 (sihui-backend)
+- **技术栈**：Spring Boot 3.x, Maven, Java 17
+- **依赖**：Spring Web, Spring Data JPA, Spring Security, Lombok, Swagger
+- **部署要求**：
+  - Java 8 或 Oracle JDK 8
+  - Maven 3.6+
+  - MySQL 8.0+
+  - Redis (可选)
+  - Docker (可选)
+  - Nginx作为反向代理
+  - SSL证书配置
+  - 系统服务配置
+
+#### 微信小程序 (sihui-wx)
+- **技术栈**：UniApp
+- **部署要求**：
+  - 发布到微信小程序官网
+  - API接口与后端对接
+  - 配置域名白名单
+  - SSL证书配置
+
+### 3. 基础设施和依赖关系
+
+#### 基础设施
+- **操作系统**：Linux (推荐 Ubuntu 20.04 LTS 或 CentOS 8+)
+- **硬件要求**：
+  - CPU: 2核心以上
+  - 内存: 4GB以上 (推荐8GB)
+  - 硬盘: 50GB以上 SSD
+  - 网络: 外网IP，开放端口 80, 443, 22
+
+#### 依赖关系
+- **数据库**：MySQL 8.0+
+- **缓存**：Redis (可选)
+- **对象存储**：阿里云OSS, 腾讯云COS, 七牛云
+- **AI服务**：DeepSeek, OpenAI, 百度文心
+- **邮件服务**：SMTP服务器
+- **日志管理**：logrotate
+- **防火墙**：UFW
+- **监控**：Prometheus, Grafana (可选)
+
+### 4. 部署流程和脚本
+
+#### 部署流程
+1. **服务器初始化**：更新系统，创建部署目录，安装基础软件（Java, Maven, MySQL, Node.js, Nginx, Git）。
+2. **克隆项目**：使用Git克隆项目或通过XFTP上传项目文件。
+3. **配置环境变量**：编辑后端和前端的环境变量文件。
+4. **数据库初始化**：创建数据库和用户，执行迁移脚本。
+5. **构建和部署后端**：使用Maven构建后端项目，复制JAR文件到指定目录。
+6. **构建和部署前端**：使用npm构建前端项目，复制静态文件到指定目录。
+7. **配置Nginx**：复制Nginx配置文件并修改域名和路径。
+8. **配置SSL证书**：将SSL证书复制到指定目录并设置权限。
+9. **创建系统服务**：创建后端和前端的systemd服务文件。
+10. **启动服务**：重载systemd配置，启动并设置开机自启。
+11. **部署验证**：检查服务状态，访问测试，检查SSL证书。
+
+#### 自动化部署脚本
+- **`scripts/deploy.sh`**：支持多环境部署，提供备份、构建镜像和服务部署等功能。
+- **`server-install.sh`**：一键安装脚本，自动完成系统更新、软件安装、数据库创建、配置文件部署、服务启动等步骤。
+
+### 5. 优化的部署建议和最佳实践
+
+#### Docker容器化部署
+- **优势**：
+  - 一致性和可移植性
+  - 资源隔离
+  - 快速部署和扩展
+- **建议**：
+  - 使用多阶段构建优化镜像大小
+  - 使用Docker Compose管理多个服务
+  - 配置健康检查
+  - 使用Docker Secrets管理敏感信息
+  - 使用Docker Volumes持久化数据
+
+#### Nginx反向代理配置
+- **配置示例**：
+  ```nginx
+  server {
+      listen 80;
+      server_name your-domain.com;
+      return 301 https://$host$request_uri;
+  }
+
+  server {
+      listen 443 ssl;
+      server_name your-domain.com;
+
+      ssl_certificate /opt/sihui/ssl/your-domain.com.crt;
+      ssl_certificate_key /opt/sihui/ssl/your-domain.com.key;
+
+      location / {
+          proxy_pass http://localhost:3000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location /api/ {
+          proxy_pass http://localhost:8080;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+      }
+  }
+  ```
+
+#### 数据库部署和配置
+- **建议**：
+  - 使用主从复制提高可用性
+  - 配置读写分离
+  - 使用连接池管理数据库连接
+  - 定期备份数据库
+  - 监控数据库性能
+
+#### SSL证书配置
+- **建议**：
+  - 使用Let's Encrypt免费证书
+  - 自动续签证书
+  - 配置HTTP到HTTPS的重定向
+  - 使用强加密套件
+
+#### 系统服务配置
+- **建议**：
+  - 使用systemd管理服务
+  - 配置服务自启动
+  - 设置合理的资源限制
+  - 配置日志轮转
+
+#### 性能优化和监控
+- **性能优化**：
+  - 使用缓存策略（如Redis）
+  - 优化数据库查询（使用索引和分页）
+  - 优化前端性能（减少资源加载时间）
+  - 使用CDN加速静态资源
+  - 配置Gzip压缩
+- **监控**：
+  - 使用Prometheus和Grafana进行监控
+  - 监控CPU、内存、磁盘和网络使用情况
+  - 监控服务状态和响应时间
+  - 设置告警规则
+
+### 项目任务关联
+
+- **Task 14: 性能优化**：优化缓存策略、数据库查询和前端性能。
+- **Task 6: PC端管理界面搭建**：使用Vue 3 + Element Plus + TypeScript搭建PC端管理界面。
+- **Task 1: Setup Project Repository**：初始化项目仓库和目录结构。
+- **Task 2: Configure Spring Boot Project**：配置Spring Boot项目。
+- **Task 17: 修复后端测试失败问题**：解决UserController权限测试、KnowledgeDocumentController测试和AiChatPerformanceTest中的配置问题。
+- **Task 16: 优化小程序前端页面样式**：根据设计稿重构和优化小程序前端页面样式。
+- **Task 15: 安全性和扩展性考虑**：实施安全措施和扩展性考虑。
+
+通过上述分析和建议，可以确保项目的部署架构和配置更加健壮、高效和安全。
+
+
+---
+
+*Generated by Task Master Research Command*  
+*Timestamp: 2025-06-21T17:15:35.318Z*

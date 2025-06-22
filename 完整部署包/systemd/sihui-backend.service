@@ -1,0 +1,23 @@
+﻿[Unit]
+Description=Sihui Backend Service
+Documentation=https://github.com/your-repo/sihui
+After=mysql.service network.target
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/sihui/backend
+ExecStart=/usr/bin/java -Xms512m -Xmx2g -jar /opt/sihui/backend/app.jar
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# 鐜鍙橀噺
+Environment=SPRING_PROFILES_ACTIVE=production
+Environment=JAVA_OPTS=-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai
+
+[Install]
+WantedBy=multi-user.target

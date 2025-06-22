@@ -1,0 +1,306 @@
+# ShardingSphere 分库分表配置
+# 用于实现数据库的水平扩展
+
+spring:
+  shardingsphere:
+    # 数据源配置
+    datasource:
+      names: user_db,survey_db,content_db,analytics_db,user_db_0,user_db_1,survey_db_0,survey_db_1
+      
+      # 用户数据库主库
+      user_db:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-user-master:3306/sihui_user?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 20
+          minimum-idle: 5
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+      
+      # 问卷数据库主库
+      survey_db:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-survey-master:3306/sihui_survey?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 30
+          minimum-idle: 10
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+      
+      # 内容数据库主库
+      content_db:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-content-master:3306/sihui_content?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 25
+          minimum-idle: 8
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+      
+      # 分析数据库主库
+      analytics_db:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-analytics-master:3306/sihui_analytics?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 15
+          minimum-idle: 5
+          connection-timeout: 30000
+          idle-timeout: 600000
+          max-lifetime: 1800000
+      
+      # 聊天消息分片数据库0
+      user_db_0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-chat-0:3306/sihui_chat_0?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 20
+          minimum-idle: 5
+      
+      # 聊天消息分片数据库1
+      user_db_1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-chat-1:3306/sihui_chat_1?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 20
+          minimum-idle: 5
+      
+      # 问卷响应分片数据库0
+      survey_db_0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-response-0:3306/sihui_response_0?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 25
+          minimum-idle: 8
+      
+      # 问卷响应分片数据库1
+      survey_db_1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-response-1:3306/sihui_response_1?useSSL=false&serverTimezone=Asia/Shanghai
+        username: ${DB_USERNAME:sihui_user}
+        password: ${DB_PASSWORD:sihui123}
+        hikari:
+          maximum-pool-size: 25
+          minimum-idle: 8
+
+    # 分片规则配置
+    rules:
+      sharding:
+        # 分片算法配置
+        sharding-algorithms:
+          # 用户ID哈希分片算法
+          user_hash_mod:
+            type: HASH_MOD
+            props:
+              sharding-count: 2
+          
+          # 时间范围分片算法
+          time_range_sharding:
+            type: CLASS_BASED
+            props:
+              strategy: STANDARD
+              algorithmClassName: com.vote.sihuibackend.sharding.TimeRangeShardingAlgorithm
+          
+          # 年月分片算法
+          year_month_sharding:
+            type: CLASS_BASED
+            props:
+              strategy: STANDARD
+              algorithmClassName: com.vote.sihuibackend.sharding.YearMonthShardingAlgorithm
+
+        # 分片策略配置
+        default-database-strategy:
+          standard:
+            sharding-column: tenant_id
+            sharding-algorithm-name: user_hash_mod
+
+        # 表分片规则
+        tables:
+          # 聊天消息表分片
+          chat_messages:
+            actual-data-nodes: user_db_${0..1}.chat_messages_${2024..2026}_${01..12}
+            database-strategy:
+              standard:
+                sharding-column: user_id
+                sharding-algorithm-name: user_hash_mod
+            table-strategy:
+              standard:
+                sharding-column: created_at
+                sharding-algorithm-name: year_month_sharding
+            key-generate-strategy:
+              column: id
+              key-generator-name: snowflake
+          
+          # 问卷响应表分片
+          questionnaire_responses:
+            actual-data-nodes: survey_db_${0..1}.questionnaire_responses_${2024..2026}_${01..12}
+            database-strategy:
+              standard:
+                sharding-column: questionnaire_id
+                sharding-algorithm-name: user_hash_mod
+            table-strategy:
+              standard:
+                sharding-column: created_at
+                sharding-algorithm-name: year_month_sharding
+            key-generate-strategy:
+              column: id
+              key-generator-name: snowflake
+          
+          # 用户操作日志表分片
+          user_operation_logs:
+            actual-data-nodes: analytics_db.user_operation_logs_${2024..2026}_${01..12}
+            table-strategy:
+              standard:
+                sharding-column: created_at
+                sharding-algorithm-name: year_month_sharding
+            key-generate-strategy:
+              column: id
+              key-generator-name: snowflake
+
+        # 广播表配置（不分片的全局表）
+        broadcast-tables:
+          - roles
+          - permissions
+          - system_configs
+          - dictionaries
+
+        # 绑定表配置（关联表一起分片）
+        binding-tables:
+          - chat_sessions,chat_messages
+          - questionnaires,questionnaire_responses,answers
+
+        # 主键生成策略
+        key-generators:
+          snowflake:
+            type: SNOWFLAKE
+            props:
+              worker-id: 1
+
+      readwrite-splitting:
+        data-sources:
+          # 用户服务读写分离
+          user_readwrite:
+            type: Static
+            props:
+              write-data-source-name: user_db
+              read-data-source-names: user_db_read_0,user_db_read_1
+            load-balancer-name: round_robin
+          
+          # 问卷服务读写分离
+          survey_readwrite:
+            type: Static
+            props:
+              write-data-source-name: survey_db
+              read-data-source-names: survey_db_read_0,survey_db_read_1
+            load-balancer-name: round_robin
+          
+          # 内容服务读写分离
+          content_readwrite:
+            type: Static
+            props:
+              write-data-source-name: content_db
+              read-data-source-names: content_db_read_0,content_db_read_1
+            load-balancer-name: round_robin
+
+        # 负载均衡算法
+        load-balancers:
+          round_robin:
+            type: ROUND_ROBIN
+          random:
+            type: RANDOM
+          weight:
+            type: WEIGHT
+            props:
+              user_db_read_0: 1
+              user_db_read_1: 2
+
+    # 属性配置
+    props:
+      # SQL日志
+      sql-show: false
+      sql-simple: true
+      
+      # 分片执行
+      max-connections-size-per-query: 1
+      kernel-executor-size: 16
+      
+      # 检查配置
+      check-table-metadata-enabled: false
+      check-duplicate-table-enabled: false
+
+# 只读数据源配置（从库）
+readwrite-splitting:
+  datasources:
+    user_db_read_0:
+      type: com.zaxxer.hikari.HikariDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://mysql-user-slave-0:3306/sihui_user?useSSL=false&serverTimezone=Asia/Shanghai
+      username: ${DB_USERNAME:sihui_user}
+      password: ${DB_PASSWORD:sihui123}
+      hikari:
+        maximum-pool-size: 15
+        minimum-idle: 5
+        read-only: true
+    
+    user_db_read_1:
+      type: com.zaxxer.hikari.HikariDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://mysql-user-slave-1:3306/sihui_user?useSSL=false&serverTimezone=Asia/Shanghai
+      username: ${DB_USERNAME:sihui_user}
+      password: ${DB_PASSWORD:sihui123}
+      hikari:
+        maximum-pool-size: 15
+        minimum-idle: 5
+        read-only: true
+
+  # 事务配置
+  transaction:
+    default-timeout: 30
+    rollback-on-commit-failure: true
+  
+  # JPA配置（适配分片）
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: false
+        format_sql: false
+        generate_statistics: false
+        # 禁用批量操作（分片环境下可能有问题）
+        jdbc.batch_size: 0
+        order_inserts: false
+        order_updates: false
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,shardingsphere
+  endpoint:
+    shardingsphere:
+      enabled: true 

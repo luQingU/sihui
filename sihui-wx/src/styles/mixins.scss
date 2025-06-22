@@ -1,0 +1,118 @@
+// 样式混入文件
+@import './variables.scss';
+
+// 卡片样式
+@mixin card-style($padding: $space-lg) {
+  background-color: $bg-color-primary;
+  border-radius: $radius-lg;
+  padding: $padding;
+  box-shadow: $shadow-sm;
+}
+
+// 按钮样式
+@mixin button-style($bg-color: $primary-color, $text-color: $bg-color-primary) {
+  background-color: $bg-color;
+  color: $text-color;
+  border: none;
+  border-radius: $radius-md;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+// 输入框样式
+@mixin input-style() {
+  width: 100%;
+  padding: 0 $space-lg;
+  border: 2rpx solid $border-color-light;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  color: $text-color-primary;
+  background-color: $bg-color-primary;
+  box-sizing: border-box;
+  
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+  }
+  
+  &::placeholder {
+    color: $text-color-tertiary;
+  }
+}
+
+// 列表项样式
+@mixin list-item-style() {
+  display: flex;
+  align-items: center;
+  padding: $space-xl $space-lg;
+  border-bottom: 2rpx solid $bg-color-tertiary;
+  transition: background-color 0.3s ease;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:active {
+    background-color: $bg-color-secondary;
+  }
+}
+
+// 页面容器样式
+@mixin page-container() {
+  min-height: 100vh;
+  background-color: $bg-color-secondary;
+  padding: $space-md;
+  padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+}
+
+// 底部安全区样式
+@mixin bottom-safe() {
+  height: 100rpx;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+// 文本省略
+@mixin ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  } @else {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+}
+
+// Flex布局快捷方式
+@mixin flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between() {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column() {
+  display: flex;
+  flex-direction: column;
+} 
