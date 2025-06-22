@@ -1,0 +1,61 @@
+// 全局样式变量配置
+// 主色调
+$primary-color: #2979ff;
+$primary-light: #4fc3f7;
+$primary-dark: #1976d2;
+
+// 辅助色
+$success-color: #18bc37;
+$warning-color: #ff9800;
+$error-color: #e43d33;
+$info-color: #9c27b0;
+
+// 中性色
+$text-color-primary: #333333;
+$text-color-secondary: #666666;
+$text-color-tertiary: #999999;
+$text-color-light: #cccccc;
+
+// 背景色
+$bg-color-primary: #ffffff;
+$bg-color-secondary: #f8f8f8;
+$bg-color-tertiary: #f0f0f0;
+
+// 边框色
+$border-color-light: #e0e0e0;
+$border-color-primary: #d0d0d0;
+$border-color-dark: #b0b0b0;
+
+// 间距
+$space-xs: 8rpx;
+$space-sm: 16rpx;
+$space-md: 24rpx;
+$space-lg: 32rpx;
+$space-xl: 48rpx;
+$space-xxl: 64rpx;
+
+// 圆角
+$radius-xs: 8rpx;
+$radius-sm: 12rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-round: 50%;
+
+// 字体大小
+$font-size-xs: 20rpx;
+$font-size-sm: 24rpx;
+$font-size-md: 28rpx;
+$font-size-lg: 32rpx;
+$font-size-xl: 36rpx;
+$font-size-xxl: 40rpx;
+$font-size-title: 48rpx;
+
+// 阴影
+$shadow-sm: 0 2rpx 12rpx rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4rpx 20rpx rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+
+// 层级
+$z-index-tabbar: 1000;
+$z-index-modal: 2000;
+$z-index-toast: 3000; 
