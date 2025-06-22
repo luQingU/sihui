@@ -10,7 +10,14 @@
               <uni-icons type="chat" size="16" color="#ffffff"></uni-icons>
             </view>
             <view class="message-content">
-              <text class="message-text">您好！我是您的学习助手，有什么学习问题可以随时问我哦～</text>
+              <text class="message-text">您好！我是四会学习平台的AI助手，具备以下能力：
+
+🎯 四会培训知识问答
+📚 基于培训文档的专业解答
+🔍 实时联网搜索最新信息
+💬 上下文记忆对话
+
+有任何关于四会培训（会听、会说、会做、会教）的问题都可以问我哦～</text>
             </view>
           </view>
         </view>
@@ -54,14 +61,17 @@ Vue:
     <!-- 快速回复建议 -->
     <view class="quick-replies">
       <scroll-view class="quick-scroll" scroll-x>
-        <view class="quick-item" @click="sendQuickReply('推荐学习路径')">
-          <text class="quick-text">推荐学习路径</text>
+        <view class="quick-item" @click="sendQuickReply('什么是四会培训？')">
+          <text class="quick-text">什么是四会培训？</text>
         </view>
-        <view class="quick-item" @click="sendQuickReply('实战项目建议')">
-          <text class="quick-text">实战项目建议</text>
+        <view class="quick-item" @click="sendQuickReply('如何提升客户沟通技巧？')">
+          <text class="quick-text">如何提升沟通技巧？</text>
         </view>
-        <view class="quick-item" @click="sendQuickReply('学习资源推荐')">
-          <text class="quick-text">学习资源推荐</text>
+        <view class="quick-item" @click="sendQuickReply('业务操作规范有哪些？')">
+          <text class="quick-text">业务操作规范</text>
+        </view>
+        <view class="quick-item" @click="sendQuickReply('客户培训方法推荐')">
+          <text class="quick-text">客户培训方法</text>
         </view>
       </scroll-view>
     </view>
@@ -91,11 +101,19 @@ Vue:
         </button>
       </view>
     </view>
+
+    <!-- 底部导航栏 -->
+    <TabBar :current="2"></TabBar>
   </view>
 </template>
 
 <script>
+import TabBar from '@/components/TabBar.vue'
+
 export default {
+  components: {
+    TabBar
+  },
   data() {
     return {
       inputText: '',
@@ -143,7 +161,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  height: 100vh;
+  height: calc(100vh - 100rpx - env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   background-color: #f8f8f8;

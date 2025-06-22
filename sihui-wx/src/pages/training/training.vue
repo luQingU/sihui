@@ -13,17 +13,27 @@
     >
       <view class="course-item" v-for="course in courseList" :key="course.id" @click="goToCourseDetail(course)">
         <image class="course-image" :src="course.cover" mode="aspectFill"></image>
+        <view class="course-badge">
+          <view class="type-badge" :class="course.type">
+            <uni-icons :type="course.type === 'video' ? 'videocam' : 'document'" size="12" color="#ffffff"></uni-icons>
+            <text class="badge-text">{{ course.type === 'video' ? '视频' : '文档' }}</text>
+          </view>
+        </view>
         <view class="course-info">
           <text class="course-title">{{ course.title }}</text>
           <text class="course-desc">{{ course.description }}</text>
           <view class="course-meta">
             <view class="meta-item">
               <uni-icons type="clock" size="12" color="#999999"></uni-icons>
-              <text class="meta-text">{{ course.duration }}课时</text>
+              <text class="meta-text">{{ course.duration }}分钟</text>
             </view>
             <view class="meta-item">
               <uni-icons type="person" size="12" color="#999999"></uni-icons>
               <text class="meta-text">{{ course.studentCount }}人已学</text>
+            </view>
+            <view class="meta-item" v-if="course.hasDocument">
+              <uni-icons type="document" size="12" color="#2979ff"></uni-icons>
+              <text class="meta-text doc-text">配套文档</text>
             </view>
           </view>
         </view>
@@ -35,11 +45,22 @@
         <text class="empty-text">暂无课程</text>
       </view>
     </scroll-view>
+
+    <!-- 底部安全区域 -->
+    <view class="bottom-safe"></view>
+    
+    <!-- 底部导航栏 -->
+    <TabBar :current="1"></TabBar>
   </view>
 </template>
 
 <script>
+import TabBar from '@/components/TabBar.vue'
+
 export default {
+  components: {
+    TabBar
+  },
   data() {
     return {
       courseList: [],
@@ -74,27 +95,43 @@ export default {
           const mockData = [
             {
               id: 1,
-              title: '前端开发进阶训练营',
-              description: '深入学习React、Vue、Angular等主流框架，掌握前端工程化与性能优化。',
+              title: '四会培训：会听 - 客户需求分析',
+              description: '学习如何有效倾听客户需求，掌握专业的沟通技巧，提升客户满意度。',
               cover: '/static/course-placeholder.jpg',
-              duration: 48,
-              studentCount: 120
+              duration: 24,
+              studentCount: 156,
+              type: 'video', // video, document
+              hasDocument: true
             },
             {
               id: 2,
-              title: '人工智能基础与应用',
-              description: '从零开始学习Python、机器学习算法、深度学习框架TensorFlow和PyTorch。',
+              title: '四会培训：会说 - 产品介绍技巧',
+              description: '掌握产品介绍的核心要点，学会用简洁有力的语言打动客户。',
               cover: '/static/course-placeholder.jpg',
-              duration: 60,
-              studentCount: 85
+              duration: 18,
+              studentCount: 142,
+              type: 'video',
+              hasDocument: true
             },
             {
               id: 3,
-              title: '产品经理实战训练',
-              description: '学习产品生命周期管理、用户需求分析、原型设计与敏捷开发流程。',
+              title: '四会培训：会做 - 业务操作实务',
+              description: '系统学习业务操作流程，掌握规范的业务处理方法和技巧。',
               cover: '/static/course-placeholder.jpg',
-              duration: 32,
-              studentCount: 150
+              duration: 36,
+              studentCount: 178,
+              type: 'document',
+              hasDocument: true
+            },
+            {
+              id: 4,
+              title: '四会培训：会教 - 知识传授方法',
+              description: '学习如何有效传授知识给客户，提升培训和指导能力。',
+              cover: '/static/course-placeholder.jpg',
+              duration: 30,
+              studentCount: 123,
+              type: 'video',
+              hasDocument: true
             }
           ]
           resolve(mockData)
@@ -143,6 +180,7 @@ export default {
   overflow: hidden;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .course-item:active {
@@ -153,6 +191,35 @@ export default {
   width: 100%;
   height: 300rpx;
   background-color: #f0f0f0;
+}
+
+.course-badge {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+}
+
+.type-badge {
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.video {
+    background-color: #2979ff;
+  }
+  
+  &.document {
+    background-color: #18bc37;
+  }
+}
+
+.badge-text {
+  font-size: 20rpx;
+  color: #ffffff;
+  margin-left: 4rpx;
+  font-weight: 500;
 }
 
 .course-info {
@@ -191,6 +258,11 @@ export default {
   margin-left: 8rpx;
 }
 
+.doc-text {
+  color: #2979ff;
+  font-weight: 500;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -203,5 +275,10 @@ export default {
   color: #999999;
   font-size: 32rpx;
   margin-top: 32rpx;
+}
+
+.bottom-safe {
+  height: calc(100rpx + env(safe-area-inset-bottom));
+  background-color: transparent;
 }
 </style> 

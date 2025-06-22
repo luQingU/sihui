@@ -2,30 +2,34 @@
   <view class="container">
     <!-- 用户欢迎信息 -->
     <view class="welcome-card">
-      <text class="welcome-text">欢迎回来，<text class="user-name">{{ userInfo.name || '张三' }}</text>！</text>
-      <text class="welcome-desc">发现更多精彩，立即开始学习！</text>
+      <text class="welcome-text">欢迎使用四会学习平台，<text class="user-name">{{ userInfo.name || '学员' }}</text>！</text>
+      <text class="welcome-desc">智能AI问答 + 四会培训资源，让学习更高效</text>
     </view>
 
     <!-- 四大主要功能入口 -->
     <view class="function-grid">
       <view class="function-item" @click="navigateTo('/pages/training/training')">
-        <uni-icons type="medal" size="40" color="#2979ff"></uni-icons>
-        <text class="function-text">培训学习</text>
+        <uni-icons type="medal-filled" size="40" color="#2979ff"></uni-icons>
+        <text class="function-text">四会培训</text>
+        <text class="function-desc">视频课程·文档资料</text>
+      </view>
+      
+      <view class="function-item" @click="navigateTo('/pages/chat/ai-chat')">
+        <uni-icons type="chat-filled" size="40" color="#9c27b0"></uni-icons>
+        <text class="function-text">AI智能问答</text>
+        <text class="function-desc">DeepSeek·知识检索</text>
       </view>
       
       <view class="function-item" @click="navigateTo('/pages/questionnaire/questionnaire')">
         <uni-icons type="list" size="40" color="#18bc37"></uni-icons>
-        <text class="function-text">问卷调查</text>
-      </view>
-      
-      <view class="function-item" @click="navigateTo('/pages/chat/ai-chat')">
-        <uni-icons type="chat" size="40" color="#9c27b0"></uni-icons>
-        <text class="function-text">AI问答</text>
+        <text class="function-text">问卷调研</text>
+        <text class="function-desc">数据收集·分析报告</text>
       </view>
       
       <view class="function-item" @click="navigateTo('/pages/learning/progress')">
-        <uni-icons type="calendar" size="40" color="#ff9800"></uni-icons>
-        <text class="function-text">我的学习</text>
+        <uni-icons type="calendar-filled" size="40" color="#ff9800"></uni-icons>
+        <text class="function-text">学习记录</text>
+        <text class="function-desc">进度跟踪·历史记录</text>
       </view>
     </view>
 
@@ -133,6 +137,13 @@ export default {
   color: $text-color-primary;
   font-weight: 500;
   margin-top: $space-md;
+  text-align: center;
+}
+
+.function-desc {
+  font-size: $font-size-sm;
+  color: $text-color-secondary;
+  margin-top: $space-xs;
   text-align: center;
 }
 

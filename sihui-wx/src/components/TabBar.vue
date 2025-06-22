@@ -38,7 +38,17 @@ export default {
           path: '/pages/index/index'
         },
         {
-          icon: 'person',
+          icon: 'medal-filled',
+          text: '学习',
+          path: '/pages/training/training'
+        },
+        {
+          icon: 'chat-filled',
+          text: '问答',
+          path: '/pages/chat/ai-chat'
+        },
+        {
+          icon: 'person-filled',
           text: '我的',
           path: '/pages/profile/profile'
         }

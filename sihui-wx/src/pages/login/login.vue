@@ -2,10 +2,36 @@
   <view class="login-container">
     <view class="login-header">
       <image class="logo" src="/static/logo.png" mode="aspectFit"></image>
-      <text class="app-name">{{ appName }}</text>
+      <text class="app-name">四会学习平台</text>
+      <text class="app-slogan">智能AI问答 + 四会培训资源</text>
     </view>
     
-    <view class="login-form">
+    <!-- 微信登录区域 -->
+    <view class="wechat-login">
+      <button 
+        class="wechat-btn" 
+        open-type="getUserProfile"
+        @click="handleWechatLogin"
+        :loading="wechatLoading"
+      >
+        <uni-icons type="weixin" size="24" color="#ffffff"></uni-icons>
+        <text class="btn-text">{{ wechatLoading ? '授权中...' : '微信授权登录' }}</text>
+      </button>
+      
+      <view class="login-tips">
+        <text class="tip-text">推荐使用微信登录，快速便捷</text>
+      </view>
+    </view>
+    
+    <!-- 分割线 -->
+    <view class="divider">
+      <view class="divider-line"></view>
+      <text class="divider-text">或使用账号登录</text>
+      <view class="divider-line"></view>
+    </view>
+    
+    <!-- 账号密码登录区域 -->
+    <view class="login-form" v-show="showAccountLogin">
       <view class="form-item">
         <uni-icons type="person" size="20" color="#999"></uni-icons>
         <input 
@@ -43,8 +69,14 @@
       </view>
     </view>
     
+    <!-- 切换登录方式 -->
+    <view class="toggle-login" @click="toggleLoginType">
+      <text class="toggle-text">{{ showAccountLogin ? '收起账号登录' : '展开账号登录' }}</text>
+      <uni-icons :type="showAccountLogin ? 'up' : 'down'" size="16" color="#999"></uni-icons>
+    </view>
+    
     <view class="login-footer">
-      <text class="footer-text">© 2024 思汇投票 版权所有</text>
+      <text class="footer-text">© 2024 四会学习平台 版权所有</text>
     </view>
   </view>
 </template>
@@ -56,12 +88,13 @@ import config from '@/config/index.js'
 export default {
   data() {
     return {
-      appName: config.app.name,
       formData: {
         username: '',
         password: ''
       },
-      loading: false
+      loading: false,
+      wechatLoading: false,
+      showAccountLogin: false
     }
   },
   
@@ -156,6 +189,51 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    
+    // 处理微信登录
+    async handleWechatLogin() {
+      this.wechatLoading = true
+      
+      try {
+        // 调用微信登录接口
+        const wechatLoginResult = await api.auth.wechatLogin()
+        
+        // 保存token
+        if (wechatLoginResult.token) {
+          uni.setStorageSync(config.cache.tokenKey, wechatLoginResult.token)
+        }
+        
+        // 获取用户信息
+        const userInfo = await api.auth.getUserInfo()
+        
+        // 保存用户信息
+        uni.setStorageSync(config.cache.userInfoKey, userInfo)
+        
+        // 显示登录成功提示
+        uni.showToast({
+          title: '登录成功',
+          icon: 'success'
+        })
+        
+        // 延迟跳转到首页
+        setTimeout(() => {
+          uni.reLaunch({
+            url: '/pages/index/index'
+          })
+        }, 1500)
+        
+      } catch (error) {
+        console.error('微信登录失败:', error)
+        // 错误提示已由请求工具处理
+      } finally {
+        this.wechatLoading = false
+      }
+    },
+    
+    // 切换登录方式
+    toggleLoginType() {
+      this.showAccountLogin = !this.showAccountLogin
     }
   }
 }
@@ -188,6 +266,14 @@ export default {
     font-weight: bold;
     color: #ffffff;
     letter-spacing: 2rpx;
+  }
+  
+  .app-slogan {
+    display: block;
+    margin-top: 20rpx;
+    font-size: 28rpx;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1rpx;
   }
 }
 
@@ -261,6 +347,67 @@ export default {
   .footer-text {
     font-size: 24rpx;
     color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.wechat-login {
+  margin-top: 80rpx;
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 60rpx 40rpx;
+  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.1);
+  
+  .wechat-btn {
+    width: 100%;
+    height: 90rpx;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 45rpx;
+    font-size: 32rpx;
+    color: #ffffff;
+    margin-bottom: 40rpx;
+    
+    &::after {
+      border: none;
+    }
+  }
+  
+  .login-tips {
+    text-align: center;
+    
+    .tip-text {
+      font-size: 26rpx;
+      color: #999999;
+    }
+  }
+}
+
+.divider {
+  margin: 80rpx 40rpx;
+  display: flex;
+  align-items: center;
+  
+  .divider-line {
+    flex: 1;
+    height: 1rpx;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .divider-text {
+    padding: 0 20rpx;
+    font-size: 28rpx;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.toggle-login {
+  margin-top: 80rpx;
+  text-align: center;
+  color: #ffffff;
+  font-size: 28rpx;
+  
+  .toggle-text {
+    margin-right: 10rpx;
   }
 }
 </style> 

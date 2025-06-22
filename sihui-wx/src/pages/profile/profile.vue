@@ -4,9 +4,19 @@
     <view class="profile-card">
       <image class="avatar" :src="userInfo.avatar || '/static/avatar-placeholder.png'" mode="aspectFill"></image>
       <view class="user-info">
-        <text class="username">{{ userInfo.name || '张三' }}</text>
-        <text class="user-id">用户ID: {{ userInfo.id || '123456' }}</text>
-        <text class="user-email">邮箱: {{ userInfo.email || 'zhangsan@example.com' }}</text>
+        <text class="username">{{ userInfo.name || '学员' }}</text>
+        <text class="user-role">{{ userInfo.role === 'customer_manager' ? '客户经理' : '零售商户' }}</text>
+        <text class="user-id">学员ID: {{ userInfo.id || '2024001' }}</text>
+        <view class="user-stats">
+          <view class="stat-item">
+            <text class="stat-value">{{ userInfo.completedCourses || 8 }}</text>
+            <text class="stat-label">已完成课程</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{ userInfo.studyHours || 24 }}</text>
+            <text class="stat-label">学习时长(h)</text>
+          </view>
+        </view>
       </view>
       <uni-icons type="gear" size="20" color="#2979ff" @click="editProfile"></uni-icons>
     </view>
@@ -15,25 +25,36 @@
     <view class="menu-list">
       <view class="menu-item" @click="navigateTo('/pages/learning/progress')">
         <uni-icons type="medal-filled" size="20" color="#2979ff"></uni-icons>
-        <text class="menu-text">我的课程</text>
+        <text class="menu-text">学习记录</text>
+        <text class="menu-desc">查看学习进度和完成情况</text>
+        <uni-icons type="arrow-right" size="14" color="#cccccc"></uni-icons>
+      </view>
+      
+      <view class="menu-item" @click="navigateTo('/pages/chat/ai-chat')">
+        <uni-icons type="chat-filled" size="20" color="#9c27b0"></uni-icons>
+        <text class="menu-text">AI问答记录</text>
+        <text class="menu-desc">查看历史对话记录</text>
         <uni-icons type="arrow-right" size="14" color="#cccccc"></uni-icons>
       </view>
       
       <view class="menu-item" @click="navigateTo('/pages/questionnaire/questionnaire')">
         <uni-icons type="list" size="20" color="#18bc37"></uni-icons>
-        <text class="menu-text">我的问卷</text>
+        <text class="menu-text">问卷调研</text>
+        <text class="menu-desc">参与问卷调查和反馈</text>
         <uni-icons type="arrow-right" size="14" color="#cccccc"></uni-icons>
       </view>
       
       <view class="menu-item" @click="showSettings">
         <uni-icons type="settings" size="20" color="#666666"></uni-icons>
         <text class="menu-text">设置</text>
+        <text class="menu-desc">个人信息和偏好设置</text>
         <uni-icons type="arrow-right" size="14" color="#cccccc"></uni-icons>
       </view>
       
       <view class="menu-item" @click="showAbout">
         <uni-icons type="help" size="20" color="#666666"></uni-icons>
-        <text class="menu-text">关于我们</text>
+        <text class="menu-text">帮助与反馈</text>
+        <text class="menu-desc">使用帮助和意见反馈</text>
         <uni-icons type="arrow-right" size="14" color="#cccccc"></uni-icons>
       </view>
     </view>
@@ -45,7 +66,7 @@
     <view class="bottom-safe"></view>
 
     <!-- 自定义底部导航栏 -->
-    <TabBar :current="1"></TabBar>
+    <TabBar :current="3"></TabBar>
   </view>
 </template>
 
@@ -174,11 +195,40 @@ export default {
   margin-bottom: 16rpx;
 }
 
-.user-id,
-.user-email {
+.user-role {
   font-size: 28rpx;
-  color: #666666;
+  color: #2979ff;
   margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.user-id {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 16rpx;
+}
+
+.user-stats {
+  display: flex;
+  gap: 32rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2979ff;
+  margin-bottom: 4rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666666;
 }
 
 .menu-list {
@@ -211,6 +261,14 @@ export default {
   color: #333333;
   font-weight: 500;
   margin-left: 32rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-desc {
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 4rpx;
 }
 
 .logout-btn {
