@@ -5,7 +5,7 @@ const config = {
     // 开发环境
     development: 'http://localhost:8080/api',
     // 生产环境
-    production: 'https://your-api-domain.com/api'
+    production: 'https://api.your-domain.com/api'
   },
   
   // 当前环境

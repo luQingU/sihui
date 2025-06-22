@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev -p 5173",
     "lint": "next lint",
-    "start": "next start -p 5173"
+    "start": "next start -p 5173",
+    "start:production": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
